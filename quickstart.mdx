@@ -1,14 +1,9 @@
 ---
 title: "Quickstart"
-description: "⏱️ Setup time: 10 minutes or less"
+description: "⏱️ Setup time: 20 minutes or less"
 ---
 
-## Setup your development
-
-- Ability to add a JavaScript snippet to your web app
-- A developer handy for HMAC token setup.
-
-You'll need:
+### You'll need:
 
 <Info>
   An active Stripe account with live/test subscriptions
@@ -17,12 +12,19 @@ You'll need:
 <Info>
   Get your [Vibess.ai](http://Vibess.ai) **App ID** and **Secret Key** in the settings page of your account.
 
-  <Expandable title="Content">
-    Image of where to find this
+  <Expandable title="👁️ How to get them">
+    1. Login to your account in https://app.vibess.ai/ 
+    2. 
   </Expandable>
 </Info>
 
-Ready? You’ll be set up in 10 minutes or less ✅
+<Info>
+  Ability to add JavaScript to your web app
+</Info>
+
+<Info>
+  Developer access for HMAC implementation
+</Info>
 
 ## 1️⃣ Import our JavaScript script
 
@@ -167,7 +169,7 @@ func main() {
 
 Use the generated HMAC token to initialize the cancellation flow:
 
-```javascript [expandable]
+```javascript
 startCancellationFlow(
     "cus_XXXXXXXXXXXXXX", // stripe customer id
     "sub_xxxxxxxxxxxxxxxxxxxxxxxxx", // stripe current subscription
@@ -200,3 +202,34 @@ startCancellationFlow(
     ```
   </Accordion>
 </AccordionGroup>
+
+### **Alternative Integration: Email-Based Session**
+
+If you don’t have access to the Stripe Customer ID, you can integrate using the user’s email. This method allows session-based identification and supports actions like subscription management or cancellation by matching the user’s email address.
+
+<Warning>
+  ATTENTION: this is not recommended unless you are sure that:
+
+  1. Your user accounts have unique emails in Stripe
+  2. Your users only have a single active subscription at a time
+
+  If these conditions are not met, you could get unexpected behavior.
+</Warning>
+
+Example:
+
+```javascript
+startCancellationFlow(
+        null, null,
+        "3423613948ef3bef5a62d33ba58da022bebd72c21c30bca0dfae50606667647e", // Here goes your hmac token
+        "1767139200", // Expiration timestamp
+        "cbbb778e-afda-5ae5-82f4-c58dcafc7f1a", // vibess app id
+        "customer@company.com",
+      );
+```
+
+## Testing
+
+- Use test mode in Stripe to verify the integration
+- Confirm HMAC token generation with test credentials
+- Verify cancellation flow triggers correctly
