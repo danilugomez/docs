@@ -10,10 +10,10 @@ description: "⏱️ Setup time: 20 minutes or less"
 </Info>
 
 <Info>
-  Get your [Vibess.ai](http://Vibess.ai)**Organization ID**  and **Secret Key** in the settings page of your account.
+  Get your [Vibess.ai](http://Vibess.ai) **Organization ID**  and **Secret Key** in your account's settings page.
 
   <Expandable title="👁️ How to get them">
-    1. Log in to your account at https://app.vibess.ai/ 
+    1. Log in to your account at https://app.vibess.ai/login
     2. Go to settings
     3. Copy your Organization ID and Secret Key
 
@@ -29,6 +29,10 @@ description: "⏱️ Setup time: 20 minutes or less"
   Developer access for HMAC implementation
 </Info>
 
+## Copy your Stripe API Key in your Vibes account
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; width: 100%"></div>
+
 ## 1️⃣ Import our JavaScript script
 
 **Add this script to your web application:**
@@ -40,6 +44,20 @@ description: "⏱️ Setup time: 20 minutes or less"
 ## 2️⃣ Create an HMAC signature
 
 Choose your preferred language to implement authentication:
+
+<Warning>
+  Remember to fill in your variables.
+
+  **Organization ID** and **Secret Key** in your account's settings page.
+
+  <Expandable title="👁️ Organization ID and Secret Key">
+    1. Log in to your account at https://app.vibess.ai/login
+    2. Go to settings
+    3. Copy your Organization ID and Secret Key
+
+       ![Wheretofindyourkeys Pn](/images/Wheretofindyourkeys.png)
+  </Expandable>
+</Warning>
 
 <CodeGroup>
 
@@ -65,7 +83,6 @@ vibess_app_id = 1 # we will provide you this number although in the future you m
 print(calculate_hmac(vibess_secret_key, external_user_id, vibess_app_id, token_expiration_timestamp))
 ```
 
-
 ```javascript JavaScript
 const crypto = require('crypto');
 
@@ -87,13 +104,12 @@ const hmacResult = calculateHmac(vibessSecretKey, externalUserId, vibessAppId, t
 console.log(hmacResult);
 ```
 
-
 ```ruby Ruby
 require 'json'
 require 'openssl'
 
 def calculate_hmac(vibess_secret_key, external_user_id, APP_ID, token_expiration_timestamp)
-  message = external_user_id + APP_ID + token_expirationE_timestamp
+  message = external_user_id + APP_ID + token_expiration_timestamp
 
   hmac = OpenSSL::HMAC.digest(OpenSSL::Digest.new('sha256'), vibess_secret_key, message)
   return hmac.unpack1('H*')  # Convert to hexadecimal string
@@ -105,17 +121,15 @@ external_user_id = "cus_XXXXXXXXXXXXXX"  # from stripe
 token_expiration_timestamp = "1767139200"  # replace this for any expiration date as a timestamp
 APP_ID = 1  # we will provide you this number although in the future you may be able to access it in our management app
 
-hmac_result = calculate_hmac(vibess_secret_key, external_user_id, APP_ID, EXPIRATION_TIMESTAMP)
+hmac_result = calculate_hmac(vibess_secret_key, external_user_id, APP_ID, token_expiration_timestamp)
 puts hmac_result
 ```
-
 
 ```php PHP
 <?php
 
 function calculateHmac($vibessSecretKey, $externalUserId, $vibessAppId, $tokenExpirationTimestamp) {
-    $message = $externalUserId . $vibessAppId . $tokenExpirationTimestamp
-    ]);
+    $message = $externalUserId . $vibessAppId . $tokenExpirationTimestamp;
 
     return hash_hmac('sha256', $message, $vibessSecretKey);
 }
@@ -132,15 +146,13 @@ echo $hmacResult;
 ?>
 ```
 
-
-```go GO [expandable]
+```go GO
 package main
 
 import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
 )
 
@@ -149,7 +161,7 @@ func calculateHmac(vibessSecretKey, externalUserId string, vibessAppId string, t
 
 	// Create HMAC
 	h := hmac.New(sha256.New, []byte(vibessSecretKey))
-	h.Write(message)
+	h.Write([]byte(message))
 
 	// Return the HMAC as a hexadecimal string
 	return hex.EncodeToString(h.Sum(nil))
@@ -159,7 +171,7 @@ func main() {
 	vibessSecretKey := "your-secret-key"          // We will provide you this
 	externalUserId := "cus_XXXXXXXXXXXXXX"          // from stripe
 	tokenExpirationTimestamp := "1767139200"     // replace this for any expiration date as a timestamp
-	vibessAppId := 1                               // we will provide you this number although in the future you may be able to access it in our management app
+	vibessAppId := "1"                               // we will provide you this number although in the future you may be able to access it in our management app
 
 	hmacResult := calculateHmac(vibessSecretKey, externalUserId, vibessAppId, tokenExpirationTimestamp)
 	fmt.Println(hmacResult)
@@ -180,7 +192,7 @@ startCancellationFlow(
     "1767139200", // Expiration timestamp 
     "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx" // vibess app id
 )
-// the info has to be the same as the one used to generate the hmac toke
+// the info has to be the same as the one used to generate the hmac token
 ```
 
 <Warning>
@@ -192,26 +204,28 @@ startCancellationFlow(
 <AccordionGroup>
   <Accordion title="JS example" icon="circle-check">
     ```javascript
-    <button onclick="handleCancellation()">Cancel Subscription</button> <script> 
-    	function handleCancellation() { 
-    	startCancellationFlow(
-    		"cus_XXXXXXXXXXXXXX",
-    		"sub_xxxxxxxxxxxxxxxxx", 
-    		"your-hmac-token",
-    		"1767139200",
-    		"your-vibess-app-id" 
-    			) 
-    } </script>
+    <button onclick="handleCancellation()">Cancel Subscription</button>
+    <script>
+      function handleCancellation() {
+        startCancellationFlow(
+          "cus_XXXXXXXXXXXXXX",
+          "sub_xxxxxxxxxxxxxxxxx",
+          "your-hmac-token",
+          "1767139200",
+          "your-vibess-app-id"
+        )
+      }
+    </script>
     ```
   </Accordion>
 </AccordionGroup>
 
 ### **Alternative Integration: Email-Based Session**
 
-If you don’t have access to the Stripe Customer ID, you can integrate using the user’s email. This method allows session-based identification and supports actions like subscription management or cancellation by matching the user’s email address.
+If you don't have access to the Stripe Customer ID, you can integrate using the user's email. This method allows session-based identification and supports actions like subscription management or cancellation by matching the user's email address.
 
 <Warning>
-  ATTENTION: this is not recommended unless you are sure that:
+  ATTENTION: This is not recommended unless you are sure that:
 
   1. Your user accounts have unique emails in Stripe
   2. Your users only have a single active subscription at a time
